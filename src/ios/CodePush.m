@@ -340,9 +340,15 @@ StatusReport* rollbackStatusReport = nil;
 
 - (void)navigateToLocalDeploymentIfExists {
     CodePushPackageMetadata* deployedPackageMetadata = [CodePushPackageManager getCurrentPackageMetadata];
-    if (deployedPackageMetadata && deployedPackageMetadata.localPath) {
+    if (deployedPackageMetadata && deployedPackageMetadata.localPath && [self isMainBundleURL:deployedPackageMetadata.localPath]) {
         [self redirectStartPageToURL: deployedPackageMetadata.localPath];
     }
+}
+
+- (BOOL)isMainBundleURL:(NSString*)packageLocation {
+    NSString* startPage = ((CDVViewController *)self.viewController).startPage;
+    NSURL* URL = [self getStartPageURLForLocalPackage:packageLocation];
+    return [URL.path containsString:startPage];
 }
 
 - (void)pluginInitialize {
